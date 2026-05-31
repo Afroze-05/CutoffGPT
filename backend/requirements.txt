@@ -1,0 +1,32 @@
+# CollegePath AI - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# ── Web Framework ──────────────────────────────────────────────────
+fastapi==0.111.0
+uvicorn[standard]==0.30.0
+python-multipart==0.0.9    # Required for file upload support
+
+# ── Database ───────────────────────────────────────────────────────
+# SQLite comes built-in with Python - no install needed!
+
+# ── PDF Processing ─────────────────────────────────────────────────
+pdfplumber==0.11.0          # Extract text from PDFs (tables + text)
+pymupdf==1.24.3             # PDF to image conversion (for OCR)
+
+# ── OCR (choose one or both) ───────────────────────────────────────
+easyocr==1.7.1              # Easy to use OCR - recommended
+# pytesseract==0.3.10       # Alternative OCR (needs Tesseract installed separately)
+Pillow==10.3.0              # Image processing
+
+# ── Vector Database ────────────────────────────────────────────────
+pinecone==4.1.0             # Pinecone vector DB for RAG
+
+# ── LLM APIs ──────────────────────────────────────────────────────
+google-generativeai==0.7.0  # Gemini AI (recommended - free tier available)
+groq==0.9.0                 # Groq AI (alternative - very fast, free tier)
+
+# ── Environment Variables ──────────────────────────────────────────
+python-dotenv==1.0.1        # Load .env file
+
+# ── Data Handling ──────────────────────────────────────────────────
+pydantic==2.7.0             # Data validation (comes with FastAPI)

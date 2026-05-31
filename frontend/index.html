@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CollegePath AI — Your Smart Admission Counselor</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="brand-icon">&#127891;</span>
+    <span class="brand-name">CollegePath <span class="accent">AI</span></span>
+  </div>
+  <div class="nav-links">
+    <a href="#upload-section" class="nav-link">Upload</a>
+    <a href="#recommend-section" class="nav-link">Find Colleges</a>
+    <a href="#compare-section" class="nav-link">Compare</a>
+    <a href="#branch-section" class="nav-link">Branch Guide</a>
+    <a href="#chat-section" class="nav-link">AI Chat</a>
+  </div>
+  <button class="nav-cta" onclick="scrollToSection('upload-section')">Get Started</button>
+</nav>
+
+<!-- HERO SECTION -->
+<section class="hero" id="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      AI-Powered Admission Counselor
+    </div>
+    <h1 class="hero-title">
+      Find Your <span class="text-gradient">Perfect College</span><br />with AI Precision
+    </h1>
+    <p class="hero-subtitle">
+      Upload your marksheet, tell us your preferences, and get intelligent
+      college recommendations tailored to your marks, rank, and budget.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="scrollToSection('upload-section')">
+        <span>&#128640;</span> Start My Journey
+      </button>
+      <button class="btn-secondary" onclick="scrollToSection('chat-section')">
+        <span>&#128172;</span> Ask AI Counselor
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Colleges</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Branches</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">AI</span><span class="stat-label">Powered</span></div>
+    </div>
+  </div>
+  <div class="hero-float-cards">
+    <div class="float-card float-card-1">
+      <div class="fc-icon">&#128202;</div>
+      <div class="fc-text"><strong>92.5%</strong><br/>PCCOE - Safe</div>
+    </div>
+    <div class="float-card float-card-2">
+      <div class="fc-icon">&#129302;</div>
+      <div class="fc-text"><strong>AI Match</strong><br/>3 Dream Colleges</div>
+    </div>
+    <div class="float-card float-card-3">
+      <div class="fc-icon">&#128205;</div>
+      <div class="fc-text"><strong>Pune, Mumbai</strong><br/>Top Locations</div>
+    </div>
+  </div>
+</section>
+
+<!-- UPLOAD SECTION -->
+<section class="section" id="upload-section">
+  <div class="section-header">
+    <div class="section-tag">Step 1</div>
+    <h2 class="section-title">Upload Your Documents</h2>
+    <p class="section-subtitle">Upload your marksheet for instant AI analysis. Admins can also upload cutoff PDFs.</p>
+  </div>
+  <div class="upload-grid">
+    <div class="upload-card" id="marksheet-card">
+      <div class="upload-icon">&#128203;</div>
+      <h3>Student Marksheet</h3>
+      <p>Upload your diploma, CET scorecard, or JEE result. AI will extract your percentage, rank, and category automatically.</p>
+      <div class="upload-zone" id="marksheet-zone" onclick="document.getElementById('marksheet-input').click()">
+        <div class="upload-zone-inner">
+          <span class="upload-zone-icon">&#8679;</span>
+          <span class="upload-zone-text">Drag & drop or click to upload</span>
+          <span class="upload-zone-hint">JPG, PNG, or PDF</span>
+        </div>
+      </div>
+      <input type="file" id="marksheet-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleMarksheetUpload(event)" />
+      <div class="upload-result" id="marksheet-result" style="display:none"></div>
+    </div>
+    <div class="upload-card" id="cutoff-card">
+      <div class="upload-icon">&#128196;</div>
+      <h3>Cutoff PDF (Admin)</h3>
+      <p>Upload CAP round cutoff PDFs, CET merit lists, or previous year admission data. System extracts all college data automatically.</p>
+      <div class="upload-zone" id="cutoff-zone" onclick="document.getElementById('cutoff-input').click()">
+        <div class="upload-zone-inner">
+          <span class="upload-zone-icon">&#8679;</span>
+          <span class="upload-zone-text">Drag & drop or click to upload</span>
+          <span class="upload-zone-hint">PDF only</span>
+        </div>
+      </div>
+      <input type="file" id="cutoff-input" accept=".pdf" style="display:none" onchange="handleCutoffUpload(event)" />
+      <div class="upload-result" id="cutoff-result" style="display:none"></div>
+    </div>
+  </div>
+</section>
+
+<!-- STUDENT PREFERENCES + RECOMMENDATIONS -->
+<section class="section section-dark" id="recommend-section">
+  <div class="section-header">
+    <div class="section-tag">Step 2</div>
+    <h2 class="section-title">Tell Us About Yourself</h2>
+    <p class="section-subtitle">Answer a few quick questions and our AI will find the best colleges for you.</p>
+  </div>
+  <div class="preferences-form-container">
+    <form class="preferences-form" id="preferences-form" onsubmit="handleRecommendation(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" id="student-name" class="form-input" placeholder="e.g. Rahul Sharma" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Percentage / Percentile</label>
+          <input type="number" id="student-pct" class="form-input" placeholder="e.g. 92.5" min="0" max="100" step="0.01" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rank (optional)</label>
+          <input type="number" id="student-rank" class="form-input" placeholder="e.g. 5420" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select id="student-category" class="form-select" required>
+            <option value="">Select Category</option>
+            <option value="OPEN">OPEN / General</option>
+            <option value="OBC">OBC</option>
+            <option value="SC">SC</option>
+            <option value="ST">ST</option>
+            <option value="EWS">EWS</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preferred Branch</label>
+          <select id="student-branch" class="form-select" required>
+            <option value="">Select Branch</option>
+            <option value="Computer Engineering">Computer Engineering</option>
+            <option value="AI & Data Science">AI &amp; Data Science</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="Electronics & Telecommunication">Electronics &amp; Telecommunication</option>
+            <option value="Mechanical Engineering">Mechanical Engineering</option>
+            <option value="Civil Engineering">Civil Engineering</option>
+            <option value="Electrical Engineering">Electrical Engineering</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preferred City</label>
+          <select id="student-city" class="form-select">
+            <option value="">Any City</option>
+            <option value="Pune">Pune</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Nagpur">Nagpur</option>
+            <option value="Nashik">Nashik</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Max Annual Budget</label>
+          <select id="student-budget" class="form-select" required>
+            <option value="">Select Budget</option>
+            <option value="30000">Up to &#8377;30K (Government)</option>
+            <option value="100000">Up to &#8377;1L</option>
+            <option value="150000">Up to &#8377;1.5L</option>
+            <option value="200000">Up to &#8377;2L</option>
+            <option value="300000">Up to &#8377;3L+</option>
+          </select>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-item">
+          <label class="toggle-switch">
+            <input type="checkbox" id="hostel-needed" />
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label">&#127968; Hostel Required</span>
+        </div>
+        <div class="toggle-item">
+          <label class="toggle-switch">
+            <input type="checkbox" id="govt-preferred" />
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label">&#127963; Prefer Government College</span>
+        </div>
+        <div class="toggle-item">
+          <label class="toggle-switch">
+            <input type="checkbox" id="placement-priority" />
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label">&#128188; High Placement Priority</span>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary btn-large" id="recommend-btn">
+        <span>&#128269;</span> Find My Colleges
+      </button>
+    </form>
+  </div>
+
+  <!-- Results -->
+  <div id="recommendation-results" style="display:none">
+    <div class="results-header">
+      <h3 class="results-title">&#127919; Your Personalized College List</h3>
+      <p class="results-subtitle" id="results-subtitle"></p>
+    </div>
+    <div class="results-tabs">
+      <button class="tab-btn active" onclick="showTab('dream')">&#127775; Dream <span id="dream-count" class="tab-count">0</span></button>
+      <button class="tab-btn" onclick="showTab('target')">&#127919; Target <span id="target-count" class="tab-count">0</span></button>
+      <button class="tab-btn" onclick="showTab('safe')">&#9989; Safe <span id="safe-count" class="tab-count">0</span></button>
+    </div>
+    <div class="college-cards-grid" id="dream-colleges" style="display:none"></div>
+    <div class="college-cards-grid" id="target-colleges" style="display:none"></div>
+    <div class="college-cards-grid" id="safe-colleges" style="display:none"></div>
+  </div>
+</section>
+
+<!-- COLLEGE COMPARISON SECTION -->
+<section class="section" id="compare-section">
+  <div class="section-header">
+    <div class="section-tag">Feature</div>
+    <h2 class="section-title">Compare Colleges</h2>
+    <p class="section-subtitle">Select colleges to compare them side by side on fees, placements, and more.</p>
+  </div>
+  <div class="compare-controls">
+    <div class="compare-inputs">
+      <input type="text" id="compare-input-1" class="form-input compare-input" placeholder="e.g. PCCOE" />
+      <span class="compare-vs">VS</span>
+      <input type="text" id="compare-input-2" class="form-input compare-input" placeholder="e.g. VIT Pune" />
+      <input type="text" id="compare-input-3" class="form-input compare-input" placeholder="e.g. COEP (optional)" />
+    </div>
+    <button class="btn-primary" onclick="handleCompare()">
+      <span>&#9878;</span> Compare Now
+    </button>
+  </div>
+  <div id="compare-results" style="display:none">
+    <div class="compare-table-wrapper">
+      <table class="compare-table" id="compare-table"></table>
+    </div>
+  </div>
+</section>
+
+<!-- MAP SECTION -->
+<section class="section section-dark" id="map-section">
+  <div class="section-header">
+    <div class="section-tag">Map View</div>
+    <h2 class="section-title">College Locations</h2>
+    <p class="section-subtitle">Explore colleges on an interactive map. Click any marker to see details.</p>
+  </div>
+  <div class="map-container">
+    <div id="college-map" class="college-map"></div>
+    <div class="map-legend">
+      <div class="legend-item"><span class="legend-dot govt"></span> Government College</div>
+      <div class="legend-item"><span class="legend-dot private"></span> Private College</div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANCH GUIDANCE SECTION -->
+<section class="section" id="branch-section">
+  <div class="section-header">
+    <div class="section-tag">Branch Guide</div>
+    <h2 class="section-title">Which Branch Suits You?</h2>
+    <p class="section-subtitle">Answer interest questions and AI will recommend the best engineering branch for you.</p>
+  </div>
+  <div class="branch-quiz" id="branch-quiz">
+    <div class="quiz-grid">
+      <div class="quiz-item" onclick="toggleQuizItem(this, 'likes_coding')">
+        <div class="quiz-icon">&#128187;</div>
+        <div class="quiz-text">I love coding and programming</div>
+        <div class="quiz-check">&#10003;</div>
+        <input type="hidden" value="false" data-key="likes_coding" />
+      </div>
+      <div class="quiz-item" onclick="toggleQuizItem(this, 'likes_ai')">
+        <div class="quiz-icon">&#129302;</div>
+        <div class="quiz-text">I'm excited about AI &amp; Machine Learning</div>
+        <div class="quiz-check">&#10003;</div>
+        <input type="hidden" value="false" data-key="likes_ai" />
+      </div>
+      <div class="quiz-item" onclick="toggleQuizItem(this, 'likes_electronics')">
+        <div class="quiz-icon">&#9889;</div>
+        <div class="quiz-text">Electronics &amp; circuits fascinate me</div>
+        <div class="quiz-check">&#10003;</div>
+        <input type="hidden" value="false" data-key="likes_electronics" />
+      </div>
+      <div class="quiz-item" onclick="toggleQuizItem(this, 'likes_mechanics')">
+        <div class="quiz-icon">&#9881;</div>
+        <div class="quiz-text">I enjoy mechanics and machines</div>
+        <div class="quiz-check">&#10003;</div>
+        <input type="hidden" value="false" data-key="likes_mechanics" />
+      </div>
+      <div class="quiz-item" onclick="toggleQuizItem(this, 'prefers_software')">
+        <div class="quiz-icon">&#128241;</div>
+        <div class="quiz-text">I prefer software over hardware</div>
+        <div class="quiz-check">&#10003;</div>
+        <input type="hidden" value="false" data-key="prefers_software" />
+      </div>
+      <div class="quiz-item" onclick="toggleQuizItem(this, 'likes_design')">
+        <div class="quiz-icon">&#127959;</div>
+        <div class="quiz-text">I like design, infrastructure, or construction</div>
+        <div class="quiz-check">&#10003;</div>
+        <input type="hidden" value="false" data-key="likes_design" />
+      </div>
+      <div class="quiz-item" onclick="toggleQuizItem(this, 'interested_in_research')">
+        <div class="quiz-icon">&#128300;</div>
+        <div class="quiz-text">Research and innovation interest me</div>
+        <div class="quiz-check">&#10003;</div>
+        <input type="hidden" value="false" data-key="interested_in_research" />
+      </div>
+    </div>
+    <button class="btn-primary btn-large" onclick="handleBranchGuidance()">
+      <span>&#129517;</span> Find My Branch
+    </button>
+    <div id="branch-results" style="display:none">
+      <h3 class="branch-results-title">&#127919; Recommended Branches for You</h3>
+      <div class="branch-cards" id="branch-cards-container"></div>
+    </div>
+  </div>
+</section>
+
+<!-- AI CHATBOT SECTION -->
+<section class="section section-dark" id="chat-section">
+  <div class="section-header">
+    <div class="section-tag">AI Counselor</div>
+    <h2 class="section-title">Ask Anything About Admissions</h2>
+    <p class="section-subtitle">Our RAG-powered chatbot answers questions from real cutoff data.</p>
+  </div>
+  <div class="chat-container">
+    <div class="sample-questions">
+      <p class="sample-q-label">Try asking:</p>
+      <div class="sample-q-chips">
+        <button class="chip" onclick="askSampleQuestion(this.textContent)">Which college can I get at 92%?</button>
+        <button class="chip" onclick="askSampleQuestion(this.textContent)">PCCOE cutoff for AI branch?</button>
+        <button class="chip" onclick="askSampleQuestion(this.textContent)">Best Mechanical Engineering college in Pune?</button>
+        <button class="chip" onclick="askSampleQuestion(this.textContent)">Lowest fees government college?</button>
+        <button class="chip" onclick="askSampleQuestion(this.textContent)">Colleges with hostel in Mumbai?</button>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-message bot-message">
+        <div class="bot-avatar">&#129302;</div>
+        <div class="message-bubble">
+          <p>Hello! I'm your CollegePath AI counselor. &#128075;</p>
+          <p>I can answer questions about college cutoffs, fees, placements, and help you find the right college.</p>
+          <p>What would you like to know?</p>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" class="chat-input" placeholder="Ask about any college, cutoff, or admission process..." onkeypress="handleChatKeypress(event)" />
+      <button class="chat-send-btn" onclick="sendChatMessage()">Send &#8599;</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <span class="brand-icon">&#127891;</span>
+      <span class="brand-name">CollegePath <span class="accent">AI</span></span>
+      <p class="footer-tagline">Helping students find their perfect college</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Features</h4>
+        <a href="#recommend-section">College Finder</a>
+        <a href="#compare-section">Compare Colleges</a>
+        <a href="#branch-section">Branch Guidance</a>
+        <a href="#chat-section">AI Counselor</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tech Stack</h4>
+        <a href="#">FastAPI Backend</a>
+        <a href="#">Pinecone RAG</a>
+        <a href="#">Gemini AI</a>
+        <a href="#">SQLite DB</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&#169; 2024 CollegePath AI &#8212; Final Year Project Demo</p>
+  </div>
+</footer>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loading-overlay" style="display:none">
+  <div class="loading-box">
+    <div class="loading-spinner"></div>
+    <p id="loading-text">Processing...</p>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
