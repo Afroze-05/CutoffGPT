@@ -1,4 +1,4 @@
-# CollegePath AI 🎓🤖
+# CutoffGPT (CollegePath AI) 🎓🤖
 
 CollegePath AI is a full-stack AI platform designed to help students (Diploma/CET/JEE) navigate the complex college admission process. By leveraging RAG (Retrieval-Augmented Generation) and Agentic AI, the platform provides personalized college recommendations based on historical cutoff data and student profiles.
 
