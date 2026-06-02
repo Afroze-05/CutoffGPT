@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CollegePath AI — Admin Dashboard</title>
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="admin-body">
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="brand-icon">🎓</span>
+      <span class="brand-name">CollegePath <span class="brand-ai">AI</span> <span class="admin-badge">Admin</span></span>
+    </div>
+    <a href="/" class="btn-outline-sm">← Student View</a>
+  </div>
+</nav>
+
+<main class="main admin-main">
+  <div class="admin-grid">
+
+    <!-- Stats -->
+    <div class="admin-stats" id="adminStats">
+      <div class="stat-card"><div class="stat-icon">🏫</div><div class="stat-val" id="sColleges">—</div><div class="stat-lbl">Colleges</div></div>
+      <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-val" id="sBranches">—</div><div class="stat-lbl">Branches</div></div>
+      <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-val" id="sCutoffs">—</div><div class="stat-lbl">Cutoff Records</div></div>
+      <div class="stat-card"><div class="stat-icon">📁</div><div class="stat-val" id="sUploads">—</div><div class="stat-lbl">Uploads</div></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="admin-card">
+      <h3>🌱 Quick Setup</h3>
+      <p>Seed the database with sample Maharashtra engineering college data and cutoffs.</p>
+      <button class="btn-primary" onclick="seedDatabase()">Seed Sample Data</button>
+      <div id="seedResult" class="alert" style="display:none"></div>
+    </div>
+
+    <!-- Upload PDF -->
+    <div class="admin-card">
+      <h3>📤 Upload Cutoff PDF</h3>
+      <p>Upload MHT-CET / CAP / JEE cutoff PDFs. AI will automatically extract college and branch-wise cutoffs.</p>
+      <div class="upload-zone" onclick="document.getElementById('cutoffFile').click()">
+        <div class="upload-icon">📄</div>
+        <p>Click to upload cutoff PDF</p>
+      </div>
+      <input type="file" id="cutoffFile" accept=".pdf" style="display:none" onchange="handleCutoffUpload(event)" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Exam Type</label>
+          <select id="uploadExamType" class="input-field">
+            <option value="CET">MHT-CET</option>
+            <option value="JEE">JEE Main</option>
+            <option value="CAP">CAP Round</option>
+            <option value="Diploma">Diploma CAP</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Year</label>
+          <input type="number" id="uploadYear" class="input-field" value="2023" min="2020" max="2025" />
+        </div>
+      </div>
+      <div id="uploadResult" class="alert" style="display:none"></div>
+    </div>
+
+    <!-- Uploads Table -->
+    <div class="admin-card full-width">
+      <div class="card-header-row">
+        <h3>📁 Upload History</h3>
+        <button class="btn-outline-sm" onclick="loadUploads()">Refresh</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table" id="uploadsTable">
+          <thead><tr><th>ID</th><th>Filename</th><th>Type</th><th>Status</th><th>Records</th><th>Date</th></tr></thead>
+          <tbody id="uploadsBody"><tr><td colspan="6" class="muted center">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Colleges Table -->
+    <div class="admin-card full-width">
+      <div class="card-header-row">
+        <h3>🏫 Colleges in Database</h3>
+        <button class="btn-outline-sm" onclick="loadColleges()">Refresh</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table" id="collegesTable">
+          <thead><tr><th>Name</th><th>City</th><th>Type</th><th>NAAC</th><th>Fees/yr</th><th>Avg LPA</th><th>Hostel</th></tr></thead>
+          <tbody id="collegesBody"><tr><td colspan="7" class="muted center">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Cutoffs Table -->
+    <div class="admin-card full-width">
+      <div class="card-header-row">
+        <h3>📊 Cutoff Records</h3>
+        <div class="filter-row">
+          <input type="text" id="cutoffSearch" class="input-field" placeholder="Filter by college..." oninput="loadCutoffs()" />
+          <button class="btn-outline-sm" onclick="loadCutoffs()">Search</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead><tr><th>College</th><th>Branch</th><th>Exam</th><th>Year</th><th>Round</th><th>Category</th><th>Cutoff %ile</th></tr></thead>
+          <tbody id="cutoffsBody"><tr><td colspan="7" class="muted center">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="loading-overlay" id="loadingOverlay" style="display:none">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <p id="loadingMsg">Processing...</p>
+  </div>
+</div>
+
+<script src="/static/js/admin.js"></script>
+</body>
+</html>

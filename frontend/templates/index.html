@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CollegePath AI — Smart College Counselor</title>
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="brand-icon">🎓</span>
+      <span class="brand-name">CollegePath <span class="brand-ai">AI</span></span>
+    </div>
+    <div class="nav-links" id="navTabs">
+      <button class="nav-tab active" data-tab="home">Home</button>
+      <button class="nav-tab" data-tab="chat">AI Counselor</button>
+      <button class="nav-tab" data-tab="results">Results</button>
+      <button class="nav-tab" data-tab="compare">Compare</button>
+      <button class="nav-tab" data-tab="map">Map View</button>
+      <button class="nav-tab" data-tab="branch">Branch Guide</button>
+    </div>
+    <a href="/admin" class="btn-outline-sm">Admin ↗</a>
+  </div>
+</nav>
+
+<!-- ── PAGES ── -->
+<main class="main">
+
+  <!-- ── HOME ── -->
+  <section class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-badge">🤖 Powered by Groq AI</div>
+      <h1 class="hero-title">Find Your <span class="gradient-text">Perfect College</span><br>with AI Guidance</h1>
+      <p class="hero-sub">Upload your MHT-CET scorecard or diploma marksheet. Our AI analyzes your profile and recommends Dream, Target & Safe colleges — just like a real counselor.</p>
+      <div class="hero-actions">
+        <button class="btn-primary btn-lg" onclick="startJourney()">🚀 Start My Journey</button>
+        <button class="btn-secondary btn-lg" onclick="showTab('branch')">🔍 Explore Branches</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num" id="statColleges">10+</span><span class="stat-label">Colleges</span></div>
+        <div class="stat"><span class="stat-num">4</span><span class="stat-label">AI Agents</span></div>
+        <div class="stat"><span class="stat-num">3</span><span class="stat-label">Categories</span></div>
+        <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Possibilities</span></div>
+      </div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" onclick="showTab('chat')">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Counselor</h3>
+        <p>Upload marksheet, chat with AI, get personalized college list</p>
+      </div>
+      <div class="feature-card" onclick="showTab('compare')">
+        <div class="feature-icon">⚖️</div>
+        <h3>College Compare</h3>
+        <p>Side-by-side comparison of fees, placements, and facilities</p>
+      </div>
+      <div class="feature-card" onclick="showTab('map')">
+        <div class="feature-icon">🗺️</div>
+        <h3>Map View</h3>
+        <p>Visualize colleges on an interactive map of Maharashtra</p>
+      </div>
+      <div class="feature-card" onclick="showTab('branch')">
+        <div class="feature-icon">🧭</div>
+        <h3>Branch Guidance</h3>
+        <p>AI quiz to find which engineering branch suits you best</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CHAT / COUNSELOR ── -->
+  <section class="page" id="page-chat">
+    <div class="chat-layout">
+      <!-- Left: Upload / Profile -->
+      <div class="chat-sidebar">
+        <div class="sidebar-card">
+          <h3>📋 Your Profile</h3>
+          <div id="profileDisplay" class="profile-display">
+            <p class="muted">No profile yet</p>
+          </div>
+          <hr />
+          <h4>Upload Marksheet</h4>
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('marksheetFile').click()">
+            <div class="upload-icon">📄</div>
+            <p>Click to upload PDF</p>
+            <span class="upload-hint">CET scorecard / Diploma marksheet</span>
+          </div>
+          <input type="file" id="marksheetFile" accept=".pdf" style="display:none" onchange="handleMarksheetUpload(event)" />
+          <div class="divider-text">— or enter manually —</div>
+          <div class="manual-form" id="manualForm">
+            <select id="manualExam" class="input-field">
+              <option value="CET">MHT-CET</option>
+              <option value="JEE">JEE Main</option>
+              <option value="Diploma">Diploma</option>
+            </select>
+            <input type="number" id="manualPercentile" class="input-field" placeholder="Percentile (e.g. 92.5)" step="0.01" min="0" max="100" />
+            <input type="number" id="manualPercentage" class="input-field" placeholder="Percentage % (if diploma)" step="0.01" />
+            <select id="manualCategory" class="input-field">
+              <option value="OPEN">OPEN</option>
+              <option value="OBC">OBC</option>
+              <option value="SC">SC</option>
+              <option value="ST">ST</option>
+              <option value="NT1">NT1</option>
+              <option value="NT2">NT2</option>
+              <option value="NT3">NT3</option>
+              <option value="EWS">EWS</option>
+            </select>
+            <input type="text" id="manualName" class="input-field" placeholder="Your name (optional)" />
+            <button class="btn-primary w-full" onclick="submitManualProfile()">Set Profile</button>
+          </div>
+        </div>
+        <div class="sidebar-card" id="prefCard" style="display:none">
+          <h4>✅ Collected Preferences</h4>
+          <div id="prefDisplay"></div>
+        </div>
+      </div>
+
+      <!-- Right: Chat -->
+      <div class="chat-main">
+        <div class="chat-header">
+          <div class="chat-avatar">🤖</div>
+          <div>
+            <div class="chat-name">CollegePath AI</div>
+            <div class="chat-status" id="chatStatus">Upload marksheet to start</div>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="msg ai">
+            <div class="msg-bubble">
+              👋 Welcome! I'm CollegePath AI. Please upload your MHT-CET scorecard or diploma marksheet, or enter your details manually on the left to get started!
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="chatInput" class="chat-input" placeholder="Type your message..." disabled onkeydown="handleChatKey(event)" />
+          <button class="btn-send" id="sendBtn" onclick="sendChat()" disabled>➤</button>
+        </div>
+        <div id="getRecoBtn" style="display:none; padding: 12px 20px;">
+          <button class="btn-primary w-full btn-lg pulse" onclick="getRecommendations()">
+            🎯 Generate My College Recommendations
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RESULTS ── -->
+  <section class="page" id="page-results">
+    <div class="results-header">
+      <h2>Your College Recommendations</h2>
+      <p id="resultsSummary" class="results-summary"></p>
+    </div>
+    <div class="results-tabs">
+      <button class="rtab active" data-rtab="dream" onclick="showResultTab('dream')">🌟 Dream Colleges</button>
+      <button class="rtab" data-rtab="target" onclick="showResultTab('target')">🎯 Target Colleges</button>
+      <button class="rtab" data-rtab="safe" onclick="showResultTab('safe')">✅ Safe Colleges</button>
+    </div>
+    <div id="resultsContainer" class="results-container">
+      <div class="empty-state">
+        <p>No recommendations yet. Complete the AI counselor chat first.</p>
+        <button class="btn-primary" onclick="showTab('chat')">Go to AI Counselor →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── COMPARE ── -->
+  <section class="page" id="page-compare">
+    <div class="compare-header">
+      <h2>⚖️ Compare Colleges</h2>
+      <p>Select 2–4 colleges to compare side by side</p>
+    </div>
+    <div class="compare-search">
+      <div class="college-tags" id="compareCollegeTags"></div>
+      <div class="compare-search-row">
+        <input type="text" id="compareSearchInput" class="input-field" placeholder="Search college name..." oninput="searchColleges(this.value)" />
+        <button class="btn-primary" onclick="runComparison()">Compare →</button>
+      </div>
+      <div class="search-dropdown" id="searchDropdown"></div>
+    </div>
+    <div id="comparisonResult"></div>
+  </section>
+
+  <!-- ── MAP ── -->
+  <section class="page" id="page-map">
+    <div class="map-header">
+      <h2>🗺️ College Map View</h2>
+      <p>Explore colleges across Maharashtra</p>
+    </div>
+    <div class="map-layout">
+      <div class="map-sidebar">
+        <div class="map-filters">
+          <select id="mapTypeFilter" class="input-field" onchange="filterMapColleges()">
+            <option value="">All Types</option>
+            <option value="Government">Government</option>
+            <option value="Private">Private</option>
+          </select>
+          <select id="mapCityFilter" class="input-field" onchange="filterMapColleges()">
+            <option value="">All Cities</option>
+            <option value="Pune">Pune</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Nagpur">Nagpur</option>
+            <option value="Aurangabad">Aurangabad</option>
+            <option value="Sangli">Sangli</option>
+          </select>
+        </div>
+        <div id="mapCollegeList" class="map-college-list"></div>
+      </div>
+      <div id="mapContainer" class="map-container"></div>
+    </div>
+  </section>
+
+  <!-- ── BRANCH GUIDANCE ── -->
+  <section class="page" id="page-branch">
+    <div class="branch-header">
+      <h2>🧭 Branch Selection Guide</h2>
+      <p>Answer a few questions to find your perfect engineering branch</p>
+    </div>
+    <div id="branchQuiz" class="branch-quiz">
+      <div class="quiz-progress">
+        <div class="quiz-bar"><div class="quiz-fill" id="quizFill"></div></div>
+        <span id="quizProgress">Question 1 of 7</span>
+      </div>
+      <div id="quizContent"></div>
+    </div>
+    <div id="branchResults" style="display:none"></div>
+    <div class="branch-chat-section">
+      <h3>💬 Ask about any branch</h3>
+      <div class="branch-chat-messages" id="branchChatMessages"></div>
+      <div class="branch-chat-input">
+        <input type="text" id="branchChatInput" class="input-field" placeholder="e.g. What is the scope of AI & DS branch?" onkeydown="if(event.key==='Enter') sendBranchChat()" />
+        <button class="btn-primary" onclick="sendBranchChat()">Ask AI</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── LOADING OVERLAY ── -->
+<div class="loading-overlay" id="loadingOverlay" style="display:none">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <p id="loadingMsg">Processing...</p>
+  </div>
+</div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>
